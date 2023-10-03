@@ -38,6 +38,28 @@ async def list_books():
     return {"books": BOOK_DATABASE}
 
 
+# /list-books-index
+@app.get("/list-books-index")
+def list_books_index():
+    for index in range(len(BOOK_DATABASE)):
+        print(str(index))
+        print(str(BOOK_DATABASE[index]['name']))
+        yield {"books": f"Index {index} is {BOOK_DATABASE[index]['name']}."}
+
+
+"""
+# Experiment
+# Put for loop in yield won't return
+"""
+"""
+# /list-books-index
+@app.get("/list-books-index")
+def list_books_index():
+    print("IN")
+    yield {"books": f"Index {index} is {BOOK_DATABASE[index]['name']}." for index in range(len(BOOK_DATABASE))}
+"""
+
+
 # /book-by-index/{index} /book-by-index/0
 @app.get("/book-by-index/{index}")
 async def book_by_index(index: int):
@@ -72,15 +94,17 @@ async def delete_book_by_index(index: int):
         # Fail
         raise HTTPException(404, f"Index {index} is out of the range of {len(BOOK_DATABASE)}.")
     else:
-        return {"book": f"Book {BOOK_DATABASE[index]} was deleted."}
+        book_removed = BOOK_DATABASE[index]
+        BOOK_DATABASE.remove(BOOK_DATABASE[index])
+        with open(BOOKS_FILE, "w") as f:
+            json.dump(BOOK_DATABASE, f)
+        return {"book": f"Book {book_removed} was deleted."}
 
 
 # /delete-book
 @app.delete("/delete-book")
 async def delete_book(book_name: str):
     for book in BOOK_DATABASE:
-        # print(book["name"])
-        # print(book_name)
         if book["name"] == book_name:
             BOOK_DATABASE.remove(book)
             with open(BOOKS_FILE, "w") as f:
