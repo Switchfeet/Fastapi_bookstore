@@ -14,7 +14,7 @@ app = FastAPI()
 class Book(BaseModel):
     name: str
     price: float
-    genre: Literal["fiction", "non-fiction", "romance", "drama"]
+    genre: Literal["fiction", "non-fiction"]
     book_id: Optional[str] = uuid4().hex
 
 
@@ -42,6 +42,8 @@ async def list_books():
 @app.get("/list-books-index")
 def list_books_index():
     for index in range(len(BOOK_DATABASE)):
+        print(str(index))
+        print(str(BOOK_DATABASE[index]['name']))
         yield {"books": f"Index {index} is {BOOK_DATABASE[index]['name']}."}
 
 
@@ -71,7 +73,7 @@ async def book_by_index(index: int):
 # /get-random-book
 @app.get("/get-random-book")
 async def get_random_book():
-    return rd.choice(BOOK_DATABASE)
+    return {rd.choice(BOOK_DATABASE)}
 
 
 # /add-book
@@ -122,21 +124,9 @@ async def get_book(book_id: str):
     raise HTTPException(404, f"Book not found: {book_id}")
 
 
-# /update-book-price
-@app.put("/update-book-price")
-async def update_book_price(price: float):
-    pass
-
-
-# /update-book-genre
-@app.put("/update-book-genre")
-async def update_book_genre(genre: str):
-    pass
-
 # http://127.0.0.1:8000/get-current-time
 # http://127.0.0.1:8000/
 # http://pixegami.com/
-# HTTP Methods: GET, POST, PUT, PATCH, DELETE
 
 """
 # /
