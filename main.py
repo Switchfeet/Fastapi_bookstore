@@ -42,7 +42,7 @@ async def list_books():
 @app.get("/list-books-index")
 def list_books_index():
     for index in range(len(BOOK_DATABASE)):
-        yield {"books": f"Index {index} is {BOOK_DATABASE[index]['name']}."}
+        yield {"Message": f"Index {index} is {BOOK_DATABASE[index]['name']}."}
 
 
 """
@@ -106,7 +106,7 @@ async def delete_book_by_index(index: int):
         BOOK_DATABASE.remove(BOOK_DATABASE[index])
         with open(BOOKS_FILE, "w") as f:
             json.dump(BOOK_DATABASE, f)
-        return {"book": f"Book {book_removed} was deleted."}
+        return {"Message": f"Book {book_removed} was deleted."}
 
 
 # /delete-book
@@ -130,15 +130,14 @@ async def update_book_name(book_name: str, update_name: str):
     count = 0
     for book in BOOK_DATABASE:
         if book["name"] == book_name:
-            count += 1
             book["name"] = update_name
-
-    with open(BOOKS_FILE, "w") as f:
-        json.dump(BOOK_DATABASE, f)
-
+            count += 1
+    # Can't find the book
     if count == 0:
         raise HTTPException(404, f"Book: {book_name} does not exist.")
-    else:
+    else:  # Can find the book, and the book name was updated
+        with open(BOOKS_FILE, "w") as f:
+            json.dump(BOOK_DATABASE, f)
         return {"Message": f"Book: {book_name} does exist and the name is updated."}
 
 
@@ -150,25 +149,36 @@ async def update_book_price(book_name: str, update_price: float):
     count = 0
     for book in BOOK_DATABASE:
         if book["name"] == book_name:
-            count += 1
             book["price"] = update_price
-
-    with open(BOOKS_FILE, "w") as f:
-        json.dump(BOOK_DATABASE, f)
-
+            count += 1
+    # Can't find the book
     if count == 0:
         raise HTTPException(404, f"Book: {book_name} does not exist.")
     else:
+        with open(BOOKS_FILE, "w") as f:
+            json.dump(BOOK_DATABASE, f)
+
         return {"Message": f"Book: {book_name} does exist and the price was updated to {update_price}."}
 
 
 # /update-book-genre
 @app.put("/update-book-genre")
-async def update_book_genre(book_name: str, genre: str):
-    # Check validity of genre
+async def update_book_genre(book_name: str, update_genre: Literal["fiction", "non-fiction", "romance", "drama"]):
     # Find the book by index/name
     # Update the genre of book
-    pass
+    count = 0
+    for book in BOOK_DATABASE:
+        if book["name"] == book_name:
+            book["genre"] = update_genre
+            count += 1
+    # Can't find the book
+    if count == 0:
+        raise HTTPException(404, f"Book: {book_name} does not exist.")
+    else:
+        with open(BOOKS_FILE, "w") as f:
+            json.dump(BOOK_DATABASE, f)
+
+        return {"Message": f"Book: {book_name} does exist and the price was updated to {update_genre}."}
 
 
 # http://127.0.0.1:8000/get-current-time
