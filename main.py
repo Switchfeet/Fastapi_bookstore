@@ -68,6 +68,16 @@ async def book_by_index(index: int):
         return {"book": BOOK_DATABASE[index]}
 
 
+# /get-book?id=cd1a0a8100de4ef7923ba0780ae48c32
+@app.get("/get-book")
+async def get_book(book_id: str):
+    for book in BOOK_DATABASE:
+        if book["book_id"] == book_id:
+            return book
+
+    raise HTTPException(404, f"Book not found: {book_id}")
+
+
 # /get-random-book
 @app.get("/get-random-book")
 async def get_random_book():
@@ -112,26 +122,54 @@ async def delete_book(book_name: str):
     raise HTTPException(404, f"Book: {book_name} does not exist.")
 
 
-# /get-book?id=cd1a0a8100de4ef7923ba0780ae48c32
-@app.get("/get-book")
-async def get_book(book_id: str):
+# /update-book-name
+@app.put("/update-book-name")
+async def update_book_name(book_name: str, update_name: str):
+    # Find the book by index/name
+    # Update the book name
+    count = 0
     for book in BOOK_DATABASE:
-        if book["book_id"] == book_id:
-            return book
+        if book["name"] == book_name:
+            count += 1
+            book["name"] = update_name
 
-    raise HTTPException(404, f"Book not found: {book_id}")
+    with open(BOOKS_FILE, "w") as f:
+        json.dump(BOOK_DATABASE, f)
+
+    if count == 0:
+        raise HTTPException(404, f"Book: {book_name} does not exist.")
+    else:
+        return {"Message": f"Book: {book_name} does exist and the name is updated."}
 
 
 # /update-book-price
 @app.put("/update-book-price")
-async def update_book_price(price: float):
-    pass
+async def update_book_price(book_name: str, update_price: float):
+    # Find the book by index/name
+    # Update the price of book
+    count = 0
+    for book in BOOK_DATABASE:
+        if book["name"] == book_name:
+            count += 1
+            book["price"] = update_price
+
+    with open(BOOKS_FILE, "w") as f:
+        json.dump(BOOK_DATABASE, f)
+
+    if count == 0:
+        raise HTTPException(404, f"Book: {book_name} does not exist.")
+    else:
+        return {"Message": f"Book: {book_name} does exist and the price was updated to {update_price}."}
 
 
 # /update-book-genre
 @app.put("/update-book-genre")
-async def update_book_price(genre: str):
+async def update_book_genre(book_name: str, genre: str):
+    # Check validity of genre
+    # Find the book by index/name
+    # Update the genre of book
     pass
+
 
 # http://127.0.0.1:8000/get-current-time
 # http://127.0.0.1:8000/
