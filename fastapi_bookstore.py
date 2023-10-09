@@ -18,6 +18,7 @@ class Book(BaseModel):
     book_id: Optional[str] = uuid4().hex
 
 
+ENDPOINT = "http://127.0.0.1:8000"
 BOOKS_FILE = "books.json"
 BOOK_DATABASE = []
 
@@ -38,12 +39,28 @@ async def list_books():
     return {"books": BOOK_DATABASE}
 
 
+"""
+# Deprecated
+
 # /list-books-index
 @app.get("/list-books-index")
 def list_books_index():
     for index in range(len(BOOK_DATABASE)):
-        yield {"Message": f"Index {index} is {BOOK_DATABASE[index]['name']}."}
+        # yield {"Message": f"Index {index} is {BOOK_DATABASE[index]['name']}."}
+        yield {index: f"{BOOK_DATABASE[index]['name']}"}
+"""
 
+
+# /get-book-index
+@app.get("/get-book-index")
+def get_book_index(book_name: str):
+    book_find = 0
+    for index in range(len(BOOK_DATABASE)):
+        # yield {"Message": f"Index {index} is {BOOK_DATABASE[index]['name']}."}
+        if BOOK_DATABASE[index]['name'] == book_name:
+            return {"book": f"{book_name}", "index": index}
+
+    raise HTTPException(404, f"Book not found: {book_name}")
 
 """
 # Experiment
@@ -92,7 +109,8 @@ async def add_book(book: Book):
     BOOK_DATABASE.append(json_book)
     with open(BOOKS_FILE, "w") as f:
         json.dump(BOOK_DATABASE, f)
-    return {"Message": f"Book {book} was added.", "book_id": book.book_id}
+    return {"Messages": f"{book.name} was added.", "book_name": book.name, "book_id": book.book_id,
+            "book_price": book.price}
 
 
 # /delete-book-by-index/{index} /delete-book-by-index/0
