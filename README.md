@@ -39,7 +39,7 @@ python pytest --alluredir=.\test_report
 ![Allure report](https://i.imgur.com/ZmkzEL8.png)
 
 ## References
-[FastAPI Python Tutorial - Learn How to Build a REST API](https://www.youtube.com/watch?v=34cqrIp5ANg&ab_channel=pixegami)
+[FastAPI Python Tutorial - Learn How to Build a REST API](https://www.youtube.com/watch?v=34cqrIp5ANg&ab_channel=pixegami)\
 [PyTest • REST API Integration Testing with Python](https://www.youtube.com/watch?v=7dgQRVqF1N0&t=1515s&ab_channel=pixegami)
 
 ## Useful Links
@@ -47,6 +47,6 @@ python pytest --alluredir=.\test_report
 [Pytest](https://docs.pytest.org/en/7.4.x/) \
 [Allure](https://allurereport.org/)
 
-## TODO list and known issue
+## TODO list and known issues
 - Code optimization and/or refactor
 - [PyCharm unable to find fixtures in conftest.py](https://intellij-support.jetbrains.com/hc/en-us/community/posts/12897247432338-PyCharm-unable-to-find-fixtures-in-conftest-py)
